@@ -80,6 +80,9 @@ export python_version_minor
 export python_version_patch
 export PYTHON_VERSION
 
+TRUNK_VERSION=v0.17.5
+export TRUNK_VERSION
+
 -:
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?##/ {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 help:## 	help
@@ -101,5 +104,41 @@ cargo-check:## 	cargo-check
 install:cargo-install## 	install
 cargo-install:## 	cargo-install
 	cargo install --path .
+
+trunk-macos-x64:
+	wget -qO- https://github.com/thedodd/trunk/releases/download/$(TRUNK_VERSION)/trunk-x86_64-apple-darwin.tar.gz | tar -xzf-
+trunk-linux-x64:
+	wget -qO- https://github.com/thedodd/trunk/releases/download/$(TRUNK_VERSION)/trunk-x86_64-unknown-linux-gnu.tar.gz | tar -xzf-
+trunk-windows-x64:
+	wget -qO- https://github.com/thedodd/trunk/releases/download/$(TRUNK_VERSION)/trunk-x86_64-pc-windows-msvc.zip | tar -xzf
+
+wasm:
+	type -P rustup && rustup target add wasm32-unknown-unknown
+	cargo install --locked trunk
+	trunk serve
+
+# Normalize `open` across Linux, macOS, and Windows.
+# This is needed to make the `o` function (see below) cross-platform.
+	@bash if [ ! $(uname -s) = 'Darwin' ]; then \
+		if grep -q Microsoft /proc/version; then \
+			# Ubuntu on Windows using the Linux subsystem \
+			alias open='explorer.exe'; \
+		else \
+			alias open='xdg-open'; \
+		fi \
+	fi \
+
+# `o` with no arguments opens the current directory, otherwise opens the given
+# location
+	@bash function o() { \
+	if [ $# -eq 0 ]; then \
+		open .; \
+	else \
+		open "$@"; \
+	fi; \
+	}
+
+	@echo "open http://127.0.0.1:8080/index.html#dev"
+
 -include Makefile
 -include act.mk
