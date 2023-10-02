@@ -98,28 +98,68 @@ fn setup_custom_fonts(ctx: &egui::Context) {
     // Start with the default fonts (we will be adding to them rather than replacing them).
     let mut fonts = egui::FontDefinitions::default();
 
-    // Install my own font (maybe supporting non-latin characters).
-    // .ttf and .otf files supported.
     fonts.font_data.insert(
         "OD-Regular".to_owned(),
         egui::FontData::from_static(include_bytes!(
             "opendyslexic/OpenDyslexic-Regular.otf"
         )),
     );
+    fonts.font_data.insert(
+        "OD-Italic".to_owned(),
+        egui::FontData::from_static(include_bytes!(
+            "opendyslexic/OpenDyslexic-Italic.otf"
+        )),
+    );
+    fonts.font_data.insert(
+        "OD-Bold".to_owned(),
+        egui::FontData::from_static(include_bytes!(
+            "opendyslexic/OpenDyslexic-Bold.otf"
+        )),
+    );
+    fonts.font_data.insert(
+        "OD-Bold-Italic".to_owned(),
+        egui::FontData::from_static(include_bytes!(
+            "opendyslexic/OpenDyslexic-Bold-Italic.otf"
+        )),
+    );
 
-    // Put my font first (highest priority) for proportional text:
+
+
     fonts
         .families
         .entry(egui::FontFamily::Proportional)
         .or_default()
         .insert(0, "OD-Regular".to_owned());
 
-    // Put my font as last fallback for monospace:
     fonts
         .families
         .entry(egui::FontFamily::Monospace)
         .or_default()
-        .push("OD-Regular".to_owned());
+        .insert(0, "OD-Regular".to_owned());
+
+    fonts
+        .families
+        .entry(egui::FontFamily::Name("OpenDyslexic".into()))
+        .or_default()
+        .insert(0, "OD-Italic".to_owned());
+
+    fonts
+        .families
+        .entry(egui::FontFamily::Name("OpenDyslexic".into()))
+        .or_default()
+        .insert(0, "OD-Regular".to_owned());
+
+    fonts
+        .families
+        .entry(egui::FontFamily::Name("OpenDyslexic".into()))
+        .or_default()
+        .insert(0, "OD-Bold".to_owned());
+
+    fonts
+        .families
+        .entry(egui::FontFamily::Name("OpenDyslexic".into()))
+        .or_default()
+        .insert(0, "OD-Bold-Italic".to_owned());
 
     // Tell egui to use these fonts:
     ctx.set_fonts(fonts);
