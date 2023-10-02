@@ -12,9 +12,9 @@ fn main() -> eframe::Result<()> {
         ..Default::default()
     };
     eframe::run_native(
-        "eframe template",
+        "gnostr_opendyslexic",
         native_options,
-        Box::new(|cc| Box::new(eframe_template::TemplateApp::new(cc))),
+        Box::new(|cc| Box::new(gnostr_opendyslexic::TemplateApp::new(cc))),
     )
 }
 
@@ -31,7 +31,7 @@ fn main() {
             .start(
                 "the_canvas_id", // hardcode it
                 web_options,
-                Box::new(|cc| Box::new(eframe_template::TemplateApp::new(cc))),
+                Box::new(|cc| Box::new(gnostr_dyslexic::TemplateApp::new(cc))),
             )
             .await
             .expect("failed to start eframe");
