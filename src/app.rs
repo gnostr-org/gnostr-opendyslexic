@@ -24,6 +24,7 @@ impl TemplateApp {
     pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
         // This is also where you can customize the look and feel of egui using
         // `cc.egui_ctx.set_visuals` and `cc.egui_ctx.set_fonts`.
+        setup_custom_fonts(&cc.egui_ctx);
 
         // Load previous app state (if any).
         // Note that you must enable the `persistence` feature for this to work.
@@ -91,6 +92,37 @@ impl eframe::App for TemplateApp {
             });
         });
     }
+}
+
+fn setup_custom_fonts(ctx: &egui::Context) {
+    // Start with the default fonts (we will be adding to them rather than replacing them).
+    let mut fonts = egui::FontDefinitions::default();
+
+    // Install my own font (maybe supporting non-latin characters).
+    // .ttf and .otf files supported.
+    fonts.font_data.insert(
+        "OD-Regular".to_owned(),
+        egui::FontData::from_static(include_bytes!(
+            "opendyslexic/OpenDyslexic-Regular.otf"
+        )),
+    );
+
+    // Put my font first (highest priority) for proportional text:
+    fonts
+        .families
+        .entry(egui::FontFamily::Proportional)
+        .or_default()
+        .insert(0, "OD-Regular".to_owned());
+
+    // Put my font as last fallback for monospace:
+    fonts
+        .families
+        .entry(egui::FontFamily::Monospace)
+        .or_default()
+        .push("OD-Regular".to_owned());
+
+    // Tell egui to use these fonts:
+    ctx.set_fonts(fonts);
 }
 
 fn powered_by_egui_and_eframe(ui: &mut egui::Ui) {
