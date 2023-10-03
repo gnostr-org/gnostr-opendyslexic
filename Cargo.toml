@@ -1,3 +1,4 @@
+[workspace]##exclude from gnostr-workspace
 [package]
 name = "gnostr-opendyslexic"
 version = "0.0.1"
